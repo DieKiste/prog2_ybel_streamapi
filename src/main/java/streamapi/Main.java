@@ -1,7 +1,14 @@
 package streamapi;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
+import java.util.stream.Stream;
 
 /** Starter for the stream api task. */
 public class Main {
@@ -19,7 +26,7 @@ public class Main {
         // Task III: Random
 
         // Task IV+V: Resources
-
+        System.out.println(resources("file.txt"));
     }
 
     /**
@@ -70,8 +77,7 @@ public class Main {
      * @return An open {@link InputStream} for the resource file
      */
     private static InputStream getResourceAsStream(String path) {
-        // TODO
-        throw new UnsupportedOperationException();
+        return Main.class.getResourceAsStream(path);
     }
 
     /**
@@ -85,7 +91,47 @@ public class Main {
      * @return String of all matching lines, separated by {@code "\n"}
      */
     public static String resources(String path) {
-        // TODO
-        throw new UnsupportedOperationException();
+        /* 
+        StringBuilder result = new StringBuilder();
+
+        try (InputStream stream = getResourceAsStream(path)) {
+            BufferedReader r = new BufferedReader(new InputStreamReader(stream));
+
+            List<String> allLines = new ArrayList<>();
+
+            String newLine = r.readLine();
+            while (newLine != null) {
+                allLines.add(newLine);
+                newLine = r.readLine();
+            }
+
+            for (int i = 1; i < allLines.size(); i++) {
+                String s = allLines.get(i);
+                if (s.startsWith("a") && !(s.length() < 2)) {
+                    result.append(allLines.get(i)).append("\n");
+                }
+            }
+
+        } catch (IOException e) {
+            System.err.println("Ouch, that didn't work: \n" + e.getMessage());
+        }
+
+        return result.toString();
+        */
+
+        try
+        {
+            InputStream inputStream = getResourceAsStream(path);
+            String result = new BufferedReader(new InputStreamReader(inputStream)).lines()
+                .filter(c -> c.charAt(0)=='a')
+                .filter(c -> c.length() >=2)
+                .map(c -> c+"\n")
+                .reduce("", String::concat);
+            return result;
+        } catch (Exception e) {
+            System.err.println("Ouch, that didn't work: \n" + e.getMessage());
+            return null;
+        }
+        
     }
 }
